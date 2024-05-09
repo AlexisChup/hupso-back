@@ -21,6 +21,17 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
+    public function findByPartial(array $criteria): array
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
+
+        foreach ($criteria as $field => $value) {
+            $queryBuilder->andWhere("b.$field LIKE :$field")->setParameter($field, $value);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     //    /**
     //     * @return Book[] Returns an array of Book objects
     //     */
