@@ -17,23 +17,16 @@ class BookController extends AbstractController
     {
         $books = $bookRepository->findAll();
 
-        return $this->json([
-            'status' => 200,
-            'message' => 'All books.',
-            'data' => $books,
-        ]);
+        return $this->json($books);
     }
 
     #[Route('/filter', name: 'book_filter', methods: ['GET'])]
     public function filterBook(Request $request, BookRepository $bookRepository): JsonResponse
     {
-        // Decode JSON data from request body
-        $requestData = json_decode($request->getContent(), true);
+        $title = $request->query->get('title');
+        $category = $request->query->get('category');
+        $publishedAt = $request->query->get('publishedAt');
 
-        // Check if parameters exists in JSON data
-        $title = $requestData['title'] ?? null;
-        $category = $requestData['category'] ?? null;
-        $publishedAt = $requestData['publishedAt'] ?? null;
 
         // Build query parameters array
         $queryParams = [];
@@ -50,10 +43,6 @@ class BookController extends AbstractController
         // Fetch books based on query parameters
         $books = $bookRepository->findByPartial($queryParams);
 
-        return $this->json([
-            'status' => 200,
-            'message' => 'Books fetched successfully.',
-            'data' => $books,
-        ]);
+        return $this->json($books);
     }
 }
